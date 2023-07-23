@@ -59,7 +59,7 @@ return {
     performance = {
       rtp = {
         -- customize default disabled vim plugins
-        disabled_plugins = { "tohtml", "gzip", "matchit", "zipPlugin", "netrwPlugin", "tarPlugin" },
+        disabled_plugins = { "tohtml", "matchit", "netrwPlugin" },
       },
     },
   },
@@ -68,10 +68,17 @@ return {
   -- augroups/autocommands and custom filetypes also this just pure lua so
   -- anything that doesn't fit in the normal config locations above can go here
   polish = function()
+    local wk = require "which-key"
+
     vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
     vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
     vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+    -- open error list
     vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
+    wk.register({
+      q = { "Toggle error list" },
+      e = { "Open LSP float" },
+    }, { prefix = "<leader>" })
 
     -- Use LspAttach autocommand to only map the following keys
     -- after the language server attaches to the current buffer
@@ -103,6 +110,8 @@ return {
         end, opts)
       end,
     })
+
+    require('lspconfig').dafny.setup{cmd = {"dafny", "server"}}
     -- Set up custom filetypes
     -- vim.filetype.add {
     --   extension = {
